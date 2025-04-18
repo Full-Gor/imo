@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -43,6 +43,47 @@
 
       .property-card-back {
         transform: rotateY(180deg);
+      }
+
+      /* Carousel styles */
+      .carousel {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .carousel-images {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        width: 100%;
+        height: 100%;
+      }
+
+      .carousel-images img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      .carousel-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        cursor: pointer;
+      }
+
+      .carousel-button.prev {
+        left: 10px;
+      }
+
+      .carousel-button.next {
+        right: 10px;
       }
 
       /* Animations */
@@ -188,7 +229,8 @@
                   </svg>
                   <input
                     type="text"
-                    placeholder="Ville ou code postal"
+                    id="arrondissementInput"
+                    placeholder="Arrondissement (ex: 75001)"
                     class="bg-transparent w-full text-gray-800 focus:outline-none"
                   />
                 </div>
@@ -196,7 +238,7 @@
              
               <div class="flex space-x-2">
                 <div class="bg-gray-100 rounded-md px-3 py-2 text-gray-800">
-                  <select class="bg-transparent w-full focus:outline-none">
+                  <select id="typeInput" class="bg-transparent w-full focus:outline-none">
                     <option value="all">Type de bien</option>
                     <option value="apartment">Appartement</option>
                     <option value="house">Maison</option>
@@ -205,7 +247,7 @@
                 </div>
                
                 <div class="bg-gray-100 rounded-md px-3 py-2 text-gray-800">
-                  <select class="bg-transparent w-full focus:outline-none">
+                  <select id="priceInput" class="bg-transparent w-full focus:outline-none">
                     <option value="all">Prix max</option>
                     <option value="100000">100 000 €</option>
                     <option value="200000">200 000 €</option>
@@ -215,7 +257,7 @@
                 </div>
               </div>
              
-              <button class="bg-amber-600 hover:bg-amber-500 transition-colors text-white py-2 px-4 rounded-md flex items-center justify-center">
+              <button id="searchButton" class="bg-amber-600 hover:bg-amber-500 transition-colors text-white py-2 px-4 rounded-md flex items-center justify-center">
                 <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -468,7 +510,7 @@
 
         <div class="border-t border-blue-800 mt-8 pt-6">
           <p class="text-center text-blue-300">
-            &copy; 2024 ImmoPremium. Tous droits réservés.
+            © 2024 ImmoPremium. Tous droits réservés.
           </p>
         </div>
       </div>
@@ -486,7 +528,11 @@
           size: 75,
           bedrooms: 2,
           location: 'Paris 75002',
-          image: 'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          images: [
+            'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/259593/pexels-photo-259593.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
         },
         {
           id: 2,
@@ -497,9 +543,282 @@
           size: 30,
           bedrooms: 1,
           location: 'Lyon 69004',
-          image: 'https://images.pexels.com/photos/1454806/pexels-photo-1454806.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          images: [
+            'https://images.pexels.com/photos/1454806/pexels-photo-1454806.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/279719/pexels-photo-279719.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
         },
-        // Add more properties as needed
+        {
+          id: 3,
+          title: 'Maison familiale spacieuse',
+          description: 'Grande maison avec jardin, idéale pour une famille.',
+          price: 450000,
+          type: 'sale',
+          size: 120,
+          bedrooms: 4,
+          location: 'Paris 75015',
+          images: [
+            'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/323772/pexels-photo-323772.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 4,
+          title: 'Appartement cosy à louer',
+          description: 'Appartement chaleureux proche des commodités.',
+          price: 1200,
+          type: 'rent',
+          size: 60,
+          bedrooms: 2,
+          location: 'Paris 75003',
+          images: [
+            'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571471/pexels-photo-1571471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571468/pexels-photo-1571468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 5,
+          title: 'Loft industriel moderne',
+          description: 'Loft spacieux avec grandes fenêtres et hauts plafonds.',
+          price: 380000,
+          type: 'sale',
+          size: 90,
+          bedrooms: 2,
+          location: 'Paris 75011',
+          images: [
+            'https://images.pexels.com/photos/276583/pexels-photo-276583.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/259685/pexels-photo-259685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 6,
+          title: 'Studio élégant à louer',
+          description: 'Studio rénové avec goût, parfait pour jeune professionnel.',
+          price: 900,
+          type: 'rent',
+          size: 35,
+          bedrooms: 1,
+          location: 'Paris 75004',
+          images: [
+            'https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/271739/pexels-photo-271739.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 7,
+          title: 'Appartement de luxe avec terrasse',
+          description: 'Appartement haut de gamme avec grande terrasse.',
+          price: 650000,
+          type: 'sale',
+          size: 110,
+          bedrooms: 3,
+          location: 'Paris 75016',
+          images: [
+            'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571463/pexels-photo-1571463.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571470/pexels-photo-1571470.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 8,
+          title: 'Maison de ville à louer',
+          description: 'Maison de ville avec petit jardin, proche métro.',
+          price: 2000,
+          type: 'rent',
+          size: 100,
+          bedrooms: 3,
+          location: 'Paris 75012',
+          images: [
+            'https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/209315/pexels-photo-209315.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 9,
+          title: 'Appartement rénové à vendre',
+          description: 'Appartement récemment rénové avec matériaux de qualité.',
+          price: 290000,
+          type: 'sale',
+          size: 65,
+          bedrooms: 2,
+          location: 'Paris 75005',
+          images: [
+            'https://images.pexels.com/photos/259962/pexels-photo-259962.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/259950/pexels-photo-259950.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/259751/pexels-photo-259751.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 10,
+          title: 'Studio lumineux à louer',
+          description: 'Studio avec grandes fenêtres, idéal étudiant.',
+          price: 700,
+          type: 'rent',
+          size: 25,
+          bedrooms: 1,
+          location: 'Paris 75006',
+          images: [
+            'https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/271897/pexels-photo-271897.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 11,
+          title: 'Appartement avec vue sur Seine',
+          description: 'Superbe appartement avec vue imprenable sur la Seine.',
+          price: 520000,
+          type: 'sale',
+          size: 85,
+          bedrooms: 3,
+          location: 'Paris 75007',
+          images: [
+            'https://images.pexels.com/photos/1571469/pexels-photo-1571469.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571472/pexels-photo-1571472.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571467/pexels-photo-1571467.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 12,
+          title: 'Loft à louer centre-ville',
+          description: 'Loft spacieux dans quartier animé.',
+          price: 1500,
+          type: 'rent',
+          size: 80,
+          bedrooms: 2,
+          location: 'Paris 75001',
+          images: [
+            'https://images.pexels.com/photos/276554/pexels-photo-276554.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/276641/pexels-photo-276641.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 13,
+          title: 'Maison moderne à vendre',
+          description: 'Maison contemporaine avec grand jardin.',
+          price: 480000,
+          type: 'sale',
+          size: 130,
+          bedrooms: 4,
+          location: 'Paris 75013',
+          images: [
+            'https://images.pexels.com/photos/164558/pexels-photo-164558.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 14,
+          title: 'Appartement à louer proche métro',
+          description: 'Appartement pratique à deux pas du métro.',
+          price: 1100,
+          type: 'rent',
+          size: 55,
+          bedrooms: 2,
+          location: 'Paris 75014',
+          images: [
+            'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571471/pexels-photo-1571471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571468/pexels-photo-1571468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 15,
+          title: 'Penthouse de luxe',
+          description: 'Penthouse exclusif avec vue panoramique.',
+          price: 780000,
+          type: 'sale',
+          size: 150,
+          bedrooms: 4,
+          location: 'Paris 75008',
+          images: [
+            'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571463/pexels-photo-1571463.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571470/pexels-photo-1571470.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 16,
+          title: 'Studio meublé à louer',
+          description: 'Studio tout équipé, prêt à emménager.',
+          price: 800,
+          type: 'rent',
+          size: 28,
+          bedrooms: 1,
+          location: 'Paris 75009',
+          images: [
+            'https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/271739/pexels-photo-271739.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 17,
+          title: 'Appartement haussmannien',
+          description: 'Bel appartement de style haussmannien avec parquet.',
+          price: 410000,
+          type: 'sale',
+          size: 80,
+          bedrooms: 2,
+          location: 'Paris 75017',
+          images: [
+            'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/259593/pexels-photo-259593.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 18,
+          title: 'Maison avec piscine à louer',
+          description: 'Maison avec piscine privée, parfaite pour l’été.',
+          price: 2500,
+          type: 'rent',
+          size: 140,
+          bedrooms: 4,
+          location: 'Paris 75019',
+          images: [
+            'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/323772/pexels-photo-323772.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 19,
+          title: 'Appartement avec balcon',
+          description: 'Appartement lumineux avec grand balcon.',
+          price: 340000,
+          type: 'sale',
+          size: 70,
+          bedrooms: 2,
+          location: 'Paris 75018',
+          images: [
+            'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571471/pexels-photo-1571471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/1571468/pexels-photo-1571468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        },
+        {
+          id: 20,
+          title: 'Loft à louer avec mezzanine',
+          description: 'Loft unique avec mezzanine et beaucoup de charme.',
+          price: 1700,
+          type: 'rent',
+          size: 85,
+          bedrooms: 2,
+          location: 'Paris 75010',
+          images: [
+            'https://images.pexels.com/photos/276583/pexels-photo-276583.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+            'https://images.pexels.com/photos/259685/pexels-photo-259685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+          ]
+        }
       ];
 
       // Mobile menu toggle
@@ -517,11 +836,13 @@
             <div class="property-card-inner">
               <div class="property-card-front">
                 <div class="relative h-48">
-                  <img
-                    src="${property.image}"
-                    alt="${property.title}"
-                    class="w-full h-full object-cover"
-                  />
+                  <div class="carousel">
+                    <div class="carousel-images" id="carousel-${property.id}">
+                      ${property.images.map(img => `<img src="${img}" alt="${property.title}"/>`).join('')}
+                    </div>
+                    <button class="carousel-button prev" onclick="prevSlide(event, ${property.id})">&#10094;</button>
+                    <button class="carousel-button next" onclick="nextSlide(event, ${property.id})">&#10095;</button>
+                  </div>
                   <div class="absolute top-3 left-3 bg-blue-900 text-white text-xs px-2 py-1 rounded-md">
                     ${property.type === 'rent' ? 'Location' : 'Vente'}
                   </div>
@@ -571,54 +892,75 @@
         }
       }
 
-      function filterProperties(type) {
-  // Filtre les propriétés selon le type sélectionné
-  const filteredProperties = type === 'all'
-    ? properties
-    : properties.filter(p => p.type === type);
-  
-  // Met à jour la grille de propriétés
-  const grid = document.getElementById('propertiesGrid');
-  if (grid) {
-    grid.innerHTML = filteredProperties.map(createPropertyCard).join('');
-  } else {
-    console.error("L'élément #propertiesGrid n'a pas été trouvé dans le DOM");
-  }
-}
+      // Carousel functions
+      function prevSlide(event, propertyId) {
+        event.stopPropagation();
+        const carousel = document.getElementById(`carousel-${propertyId}`);
+        const images = carousel.children;
+        let currentIndex = parseInt(carousel.dataset.index || '0');
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        carousel.dataset.index = currentIndex;
+        carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+      }
 
-// Initialisation quand le DOM est chargé
-document.addEventListener('DOMContentLoaded', function() {
-  // Initialise la grille de propriétés
-  try {
-    filterProperties('all');
-  } catch (error) {
-    console.error("Erreur lors de l'initialisation des propriétés:", error);
-  }
-  
-  // Gestion du formulaire de contact
-  const contactForm = document.getElementById('contactForm');
-  if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      // Utilise la même fonction handleContact pour le formulaire
-      handleContact(e);
-    });
-  }
-  
-  // Ajout des écouteurs sur les filtres (si présents)
-  const filterButtons = document.querySelectorAll('[data-filter]');
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Mise à jour de la classe active
-      filterButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      
-      // Filtre les propriétés
-      const filterType = button.getAttribute('data-filter');
-      filterProperties(filterType);
-    });
-  });
-});
+      function nextSlide(event, propertyId) {
+        event.stopPropagation();
+        const carousel = document.getElementById(`carousel-${propertyId}`);
+        const images = carousel.children;
+        let currentIndex = parseInt(carousel.dataset.index || '0');
+        currentIndex = (currentIndex + 1) % images.length;
+        carousel.dataset.index = currentIndex;
+        carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+      }
+
+      function filterProperties(type, arrondissement = null) {
+        let filteredProperties = type === 'all' ? properties : properties.filter(p => p.type === type);
+        if (arrondissement) {
+          filteredProperties = filteredProperties.filter(p => p.location.includes(arrondissement));
+        }
+        const grid = document.getElementById('propertiesGrid');
+        if (grid) {
+          grid.innerHTML = filteredProperties.map(createPropertyCard).join('');
+          window.location.hash = 'properties';
+        } else {
+          console.error("L'élément #propertiesGrid n'a pas été trouvé dans le DOM");
+        }
+      }
+
+      // Search functionality
+      document.getElementById('searchButton').addEventListener('click', () => {
+        const arrondissement = document.getElementById('arrondissementInput').value.trim();
+        const type = document.getElementById('typeInput').value;
+        const price = document.getElementById('priceInput').value;
+        filterProperties('all', arrondissement);
+      });
+
+      // Initialisation quand le DOM est chargé
+      document.addEventListener('DOMContentLoaded', function() {
+        try {
+          filterProperties('all');
+        } catch (error) {
+          console.error("Erreur lors de l'initialisation des propriétés:", error);
+        }
+        
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+          contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleContact(e);
+          });
+        }
+        
+        const filterButtons = document.querySelectorAll('[data-filter]');
+        filterButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            const filterType = button.getAttribute('data-filter');
+            filterProperties(filterType);
+          });
+        });
+      });
     </script>
   </body>
 </html>
