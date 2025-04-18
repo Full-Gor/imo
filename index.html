@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ImmoPremium - Votre Partenaire Immobilier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Base styles */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        color: #1f2937;
+      }
+
+      /* Property card styles */
+      .property-card {
+        perspective: 1000px;
+      }
+
+      .property-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.5s;
+        transform-style: preserve-3d;
+      }
+
+      .property-card.flipped .property-card-inner {
+        transform: rotateY(180deg);
+      }
+
+      .property-card-front,
+      .property-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+      }
+
+      .property-card-back {
+        transform: rotateY(180deg);
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in {
+        opacity: 0;
+        animation: fadeIn 0.8s ease-in forwards;
+      }
+
+      .fade-in-delay-1 {
+        animation-delay: 0.2s;
+      }
+
+      .fade-in-delay-2 {
+        animation-delay: 0.4s;
+      }
+
+      /* Custom utilities */
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background-color: #1e3a8a;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: #1e40af;
+      }
+
+      .btn-secondary {
+        background-color: #d97706;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background-color: #b45309;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 transition-all duration-300 bg-white shadow-md py-2">
+      <div class="container flex justify-between items-center">
+        <a href="#" class="flex items-center space-x-2">
+          <svg class="w-8 h-8 text-blue-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+          <span class="text-xl font-bold text-blue-900">ImmoPremium</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex space-x-8 items-center">
+          <a href="#" class="font-medium text-blue-900">Accueil</a>
+          <a href="#properties" class="font-medium text-gray-700 hover:text-blue-900">Propriétés</a>
+          <a href="#contact" class="font-medium text-gray-700 hover:text-blue-900">Contact</a>
+          <a href="#contact" class="btn btn-primary">Nous contacter</a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button id="menuButton" class="md:hidden p-2 text-gray-700 hover:text-blue-900">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <nav id="mobileMenu" class="hidden md:hidden bg-white border-t py-4 px-4 shadow-lg">
+        <div class="space-y-4 flex flex-col">
+          <a href="#" class="font-medium p-2 rounded hover:bg-blue-50 flex items-center space-x-2 text-blue-900 bg-blue-50">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Accueil</span>
+          </a>
+          <a href="#properties" class="font-medium p-2 rounded hover:bg-blue-50 flex items-center space-x-2 text-gray-700">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            <span>Propriétés</span>
+          </a>
+          <a href="#contact" class="font-medium p-2 rounded hover:bg-blue-50 flex items-center space-x-2 text-gray-700">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <span>Contact</span>
+          </a>
+          <a href="#contact" class="btn btn-primary text-center">Nous contacter</a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-blue-900 text-white">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-blue-900/70 z-10"></div>
+      <div
+        class="absolute inset-0 bg-cover bg-center"
+        style="background-image: url('https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750')"
+      ></div>
+     
+      <div class="container relative z-20 py-20 md:py-32">
+        <div class="max-w-3xl">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 fade-in">
+            Trouvez votre bien immobilier idéal
+          </h1>
+         
+          <p class="text-xl md:text-2xl mb-8 text-blue-100 fade-in fade-in-delay-1">
+            Location ou achat, nous vous accompagnons dans toutes vos démarches immobilières
+          </p>
+         
+          <div class="bg-white rounded-lg shadow-xl p-4 fade-in fade-in-delay-2">
+            <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+              <div class="flex-1">
+                <div class="flex items-center bg-gray-100 rounded-md px-3 py-2">
+                  <svg class="text-gray-400 w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Ville ou code postal"
+                    class="bg-transparent w-full text-gray-800 focus:outline-none"
+                  />
+                </div>
+              </div>
+             
+              <div class="flex space-x-2">
+                <div class="bg-gray-100 rounded-md px-3 py-2 text-gray-800">
+                  <select class="bg-transparent w-full focus:outline-none">
+                    <option value="all">Type de bien</option>
+                    <option value="apartment">Appartement</option>
+                    <option value="house">Maison</option>
+                    <option value="studio">Studio</option>
+                  </select>
+                </div>
+               
+                <div class="bg-gray-100 rounded-md px-3 py-2 text-gray-800">
+                  <select class="bg-transparent w-full focus:outline-none">
+                    <option value="all">Prix max</option>
+                    <option value="100000">100 000 €</option>
+                    <option value="200000">200 000 €</option>
+                    <option value="500000">500 000 €</option>
+                    <option value="1000000">1 000 000 €</option>
+                  </select>
+                </div>
+              </div>
+             
+              <button class="bg-amber-600 hover:bg-amber-500 transition-colors text-white py-2 px-4 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span>Rechercher</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+     
+      <!-- Features -->
+      <div class="bg-white py-4 shadow-md relative z-20">
+        <div class="container">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="flex items-center space-x-3 text-blue-900 p-3 fade-in">
+              <div class="bg-blue-100 p-3 rounded-full">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold">+1000 biens</h3>
+                <p class="text-sm text-gray-600">Disponibles à la vente et location</p>
+              </div>
+            </div>
+           
+            <div class="flex items-center space-x-3 text-blue-900 p-3 fade-in fade-in-delay-1">
+              <div class="bg-blue-100 p-3 rounded-full">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold">+ de 50 villes</h3>
+                <p class="text-sm text-gray-600">Couvertes par notre agence</p>
+              </div>
+            </div>
+           
+            <div class="flex items-center space-x-3 text-blue-900 p-3 fade-in fade-in-delay-2">
+              <div class="bg-blue-100 p-3 rounded-full">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold">Financement facilité</h3>
+                <p class="text-sm text-gray-600">Accompagnement personnalisé</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Properties Section -->
+    <section id="properties" class="py-16 bg-gray-50">
+      <div class="container">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-bold text-blue-900 mb-2">Biens en vedette</h2>
+            <p class="text-gray-600">Découvrez notre sélection de propriétés exceptionnelles</p>
+          </div>
+         
+          <div class="flex space-x-2 mt-4 md:mt-0">
+            <button
+              class="px-4 py-2 rounded-md bg-blue-900 text-white"
+              onclick="filterProperties('all')"
+            >
+              Tous
+            </button>
+            <button
+              class="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+              onclick="filterProperties('sale')"
+            >
+              À vendre
+            </button>
+            <button
+              class="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+              onclick="filterProperties('rent')"
+            >
+              À louer
+            </button>
+          </div>
+        </div>
+       
+        <div id="propertiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Properties will be dynamically inserted here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="bg-gray-50 py-12">
+      <div class="container">
+        <div class="mb-12 text-center">
+          <h2 class="text-3xl font-bold text-blue-900 mb-3">Contactez-nous</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            Une question, une demande particulière ou besoin d'informations ? Notre équipe est à votre écoute pour vous accompagner dans votre projet immobilier.
+          </p>
+        </div>
+       
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Contact Information -->
+          <div class="bg-blue-900 text-white rounded-lg shadow-lg p-8">
+            <h3 class="text-2xl font-bold mb-6">Informations</h3>
+           
+            <div class="space-y-6">
+              <div class="flex items-start space-x-4">
+                <svg class="w-6 h-6 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <div>
+                  <h4 class="font-semibold mb-1">Adresse</h4>
+                  <p class="text-blue-100">123 Avenue des Champs-Élysées, 75008 Paris</p>
+                </div>
+              </div>
+             
+              <div class="flex items-start space-x-4">
+                <svg class="w-6 h-6 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <div>
+                  <h4 class="font-semibold mb-1">Téléphone</h4>
+                  <a href="tel:0644762721" class="text-blue-100 hover:text-white transition-colors">
+                    06 44 76 27 21
+                  </a>
+                </div>
+              </div>
+             
+              <div class="flex items-start space-x-4">
+                <svg class="w-6 h-6 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <div>
+                  <h4 class="font-semibold mb-1">Email</h4>
+                  <a
+                    href="mailto:arnaudbarotteaux@gmail.com"
+                    class="text-blue-100 hover:text-white transition-colors"
+                  >
+                    arnaudbarotteaux@gmail.com
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+         
+          <!-- Contact Form -->
+          <div class="lg:col-span-2 bg-white rounded-lg shadow-lg p-8">
+            <h3 class="text-2xl font-bold text-blue-900 mb-6">Envoyez-nous un message</h3>
+           
+            <form id="contactForm" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1" for="name">
+                    Nom complet *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
+                  />
+                </div>
+               
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1" for="email">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
+                  />
+                </div>
+              </div>
+             
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1" for="message">
+                  Message *
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  required
+                  rows="5"
+                  class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
+                ></textarea>
+              </div>
+             
+              <button
+                type="submit"
+                class="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-md flex items-center justify-center space-x-2 transition-colors"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                <span>Envoyer le message</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-900 text-white pt-12 pb-6">
+      <div class="container">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-4">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+              <span class="text-xl font-bold">ImmoPremium</span>
+            </div>
+            <p class="text-blue-200 mb-4">
+              Votre partenaire de confiance pour trouver la propriété de vos rêves.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="text-lg font-bold mb-4">Contact</h4>
+            <div class="space-y-2 text-blue-200">
+              <p>123 Avenue des Champs-Élysées</p>
+              <p>75008 Paris</p>
+              <p>
+                <a href="tel:0644762721" class="hover:text-white">06 44 76 27 21</a>
+              </p>
+              <p>
+                <a href="mailto:arnaudbarotteaux@gmail.com" class="hover:text-white">
+                  arnaudbarotteaux@gmail.com
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-blue-800 mt-8 pt-6">
+          <p class="text-center text-blue-300">
+            &copy; 2024 ImmoPremium. Tous droits réservés.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Property data
+      const properties = [
+        {
+          id: 1,
+          title: 'Appartement lumineux avec vue panoramique',
+          description: 'Magnifique appartement de 3 pièces avec vue dégagée sur la ville.',
+          price: 320000,
+          type: 'sale',
+          size: 75,
+          bedrooms: 2,
+          location: 'Paris 75002',
+          image: 'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+        },
+        {
+          id: 2,
+          title: 'Studio moderne au cœur de Lyon',
+          description: 'Studio entièrement rénové avec goût au cœur du quartier de la Croix-Rousse.',
+          price: 850,
+          type: 'rent',
+          size: 30,
+          bedrooms: 1,
+          location: 'Lyon 69004',
+          image: 'https://images.pexels.com/photos/1454806/pexels-photo-1454806.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'
+        },
+        // Add more properties as needed
+      ];
+
+      // Mobile menu toggle
+      const menuButton = document.getElementById('menuButton');
+      const mobileMenu = document.getElementById('mobileMenu');
+     
+      menuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      // Property card functions
+      function createPropertyCard(property) {
+        return `
+          <div class="property-card h-[400px]" onclick="toggleCard(this)">
+            <div class="property-card-inner">
+              <div class="property-card-front">
+                <div class="relative h-48">
+                  <img
+                    src="${property.image}"
+                    alt="${property.title}"
+                    class="w-full h-full object-cover"
+                  />
+                  <div class="absolute top-3 left-3 bg-blue-900 text-white text-xs px-2 py-1 rounded-md">
+                    ${property.type === 'rent' ? 'Location' : 'Vente'}
+                  </div>
+                </div>
+                <div class="p-4">
+                  <h3 class="text-lg font-bold text-blue-900 mb-2">${property.title}</h3>
+                  <p class="text-gray-600 text-sm mb-3">${property.description}</p>
+                  <div class="flex justify-between items-center">
+                    <div class="text-sm text-gray-600">${property.size}m² • ${property.bedrooms} ch.</div>
+                    <div class="text-lg font-bold text-blue-900">
+                      ${property.price.toLocaleString()}€
+                      ${property.type === 'rent' ? '/mois' : ''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="property-card-back bg-blue-900 text-white p-6">
+                <h3 class="text-xl font-bold mb-4">${property.title}</h3>
+                <div class="space-y-4">
+                  <p>${property.description}</p>
+                  <div class="mt-4">
+                    <button
+                      onclick="handleContact(event, ${property.id})"
+                      class="w-full bg-amber-600 hover:bg-amber-500 text-white py-2 rounded-md"
+                    >
+                      Nous contacter
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function toggleCard(card) {
+        card.classList.toggle('flipped');
+      }
+
+      function handleContact(event, propertyId) {
+        event.stopPropagation();
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          window.location.href = 'tel:0644762721';
+        } else {
+          window.location.href = 'mailto:arnaudbarotteaux@gmail.com';
+        }
+      }
+
+      function filterProperties(type) {
+  // Filtre les propriétés selon le type sélectionné
+  const filteredProperties = type === 'all'
+    ? properties
+    : properties.filter(p => p.type === type);
+  
+  // Met à jour la grille de propriétés
+  const grid = document.getElementById('propertiesGrid');
+  if (grid) {
+    grid.innerHTML = filteredProperties.map(createPropertyCard).join('');
+  } else {
+    console.error("L'élément #propertiesGrid n'a pas été trouvé dans le DOM");
+  }
+}
+
+// Initialisation quand le DOM est chargé
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialise la grille de propriétés
+  try {
+    filterProperties('all');
+  } catch (error) {
+    console.error("Erreur lors de l'initialisation des propriétés:", error);
+  }
+  
+  // Gestion du formulaire de contact
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Utilise la même fonction handleContact pour le formulaire
+      handleContact(e);
+    });
+  }
+  
+  // Ajout des écouteurs sur les filtres (si présents)
+  const filterButtons = document.querySelectorAll('[data-filter]');
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Mise à jour de la classe active
+      filterButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      
+      // Filtre les propriétés
+      const filterType = button.getAttribute('data-filter');
+      filterProperties(filterType);
+    });
+  });
+});
+    </script>
+  </body>
+</html>
