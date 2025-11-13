@@ -98,6 +98,28 @@
         }
       }
 
+      @keyframes slideInFromLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes slideInFromRight {
+        from {
+          opacity: 0;
+          transform: translateX(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
       .fade-in {
         opacity: 0;
         animation: fadeIn 0.8s ease-in forwards;
@@ -109,6 +131,40 @@
 
       .fade-in-delay-2 {
         animation-delay: 0.4s;
+      }
+
+      .section-transition {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+      }
+
+      .section-transition.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Navigation link transitions */
+      nav a {
+        position: relative;
+        transition: color 0.3s ease;
+      }
+
+      nav a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 50%;
+        background-color: #1e3a8a;
+        transition: width 0.3s ease, left 0.3s ease;
+      }
+
+      nav a:hover::after,
+      nav a.active::after {
+        width: 100%;
+        left: 0;
       }
 
       /* Custom utilities */
@@ -270,8 +326,16 @@
                   />
                 </div>
               </div>
-             
-              <div class="flex space-x-2">
+
+              <div class="flex flex-wrap gap-2">
+                <div class="bg-gray-100 rounded-md px-3 py-2 text-gray-800">
+                  <select id="transactionTypeInput" class="bg-transparent w-full focus:outline-none" onchange="updatePriceOptions()">
+                    <option value="all">Transaction</option>
+                    <option value="sale">À vendre</option>
+                    <option value="rent">À louer</option>
+                  </select>
+                </div>
+
                 <div class="bg-gray-100 rounded-md px-3 py-2 text-gray-800">
                   <select id="typeInput" class="bg-transparent w-full focus:outline-none">
                     <option value="all">Type de bien</option>
@@ -280,7 +344,7 @@
                     <option value="studio">Studio</option>
                   </select>
                 </div>
-               
+
                 <div class="bg-gray-100 rounded-md px-3 py-2 text-gray-800">
                   <select id="priceInput" class="bg-transparent w-full focus:outline-none">
                     <option value="all">Prix max</option>
@@ -291,8 +355,8 @@
                   </select>
                 </div>
               </div>
-             
-              <button id="searchButton" class="bg-amber-600 hover:bg-amber-500 transition-colors text-white py-2 px-4 rounded-md flex items-center justify-center">
+
+              <button id="searchButton" class="bg-amber-600 hover:bg-amber-500 transition-colors text-white py-2 px-4 rounded-md flex items-center justify-center whitespace-nowrap">
                 <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -943,10 +1007,78 @@
       // Mobile menu toggle
       const menuButton = document.getElementById('menuButton');
       const mobileMenu = document.getElementById('mobileMenu');
-     
+
       menuButton.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
       });
+
+      // Smooth scroll with transitions for navigation
+      function setupNavigationTransitions() {
+        const navLinks = document.querySelectorAll('nav a[href^="#"], #mobileMenu a[href^="#"]');
+
+        navLinks.forEach(link => {
+          link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+
+            if (href === '#') {
+              e.preventDefault();
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              });
+
+              // Close mobile menu if open
+              mobileMenu.classList.add('hidden');
+
+              // Update active state
+              updateActiveNav(this);
+              return;
+            }
+
+            const targetId = href.substring(1);
+            const targetSection = document.getElementById(targetId);
+
+            if (targetSection) {
+              e.preventDefault();
+
+              // Add transition class
+              targetSection.classList.add('section-transition');
+
+              // Smooth scroll to section
+              targetSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+
+              // Trigger animation after scroll
+              setTimeout(() => {
+                targetSection.classList.add('active');
+              }, 100);
+
+              // Remove animation classes after animation completes
+              setTimeout(() => {
+                targetSection.classList.remove('section-transition', 'active');
+              }, 700);
+
+              // Close mobile menu if open
+              mobileMenu.classList.add('hidden');
+
+              // Update active state
+              updateActiveNav(this);
+            }
+          });
+        });
+      }
+
+      // Update active navigation link
+      function updateActiveNav(activeLink) {
+        const allLinks = document.querySelectorAll('nav a, #mobileMenu a');
+        allLinks.forEach(link => link.classList.remove('active'));
+        activeLink.classList.add('active');
+      }
+
+      // Initialize navigation transitions
+      setupNavigationTransitions();
 
       // Property card functions
       function createPropertyCard(property) {
@@ -1095,12 +1227,50 @@
         }
       }
 
+      // Update price options based on transaction type
+      function updatePriceOptions() {
+        const transactionType = document.getElementById('transactionTypeInput').value;
+        const priceSelect = document.getElementById('priceInput');
+
+        if (transactionType === 'rent') {
+          priceSelect.innerHTML = `
+            <option value="all">Prix max</option>
+            <option value="500">500 €/mois</option>
+            <option value="800">800 €/mois</option>
+            <option value="1000">1 000 €/mois</option>
+            <option value="1500">1 500 €/mois</option>
+            <option value="2000">2 000 €/mois</option>
+            <option value="3000">3 000 €/mois</option>
+          `;
+        } else if (transactionType === 'sale') {
+          priceSelect.innerHTML = `
+            <option value="all">Prix max</option>
+            <option value="100000">100 000 €</option>
+            <option value="200000">200 000 €</option>
+            <option value="300000">300 000 €</option>
+            <option value="500000">500 000 €</option>
+            <option value="700000">700 000 €</option>
+            <option value="1000000">1 000 000 €</option>
+          `;
+        } else {
+          priceSelect.innerHTML = `
+            <option value="all">Prix max</option>
+            <option value="100000">100 000 €</option>
+            <option value="200000">200 000 €</option>
+            <option value="500000">500 000 €</option>
+            <option value="1000000">1 000 000 €</option>
+          `;
+        }
+      }
+
       // Search functionality
       document.getElementById('searchButton').addEventListener('click', () => {
         const arrondissement = document.getElementById('arrondissementInput').value.trim();
-        const type = document.getElementById('typeInput').value;
+        const propertyType = document.getElementById('typeInput').value;
         const price = document.getElementById('priceInput').value;
-        filterProperties('all', arrondissement, type, price);
+        const transactionType = document.getElementById('transactionTypeInput').value;
+
+        filterProperties(transactionType, arrondissement, propertyType, price);
       });
 
       // Initialisation quand le DOM est chargé
